@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DogBreedApp</string>
+    <string name="action_fav">Favourites</string>
+    <string name="no_item">No Data Found!!</string>
+    <string name="retry">Retry</string>
+    <string name="warning_internet">Please Connect To Internet To Proceed!! and restart app</string>
+</resources>
