@@ -32,19 +32,11 @@ class ConnectivityStatus(context: Context) : LiveData<Boolean>() {
  
     @RequiresApi(Build.VERSION_CODES.M)
     private fun checkInternet(){
-        // we can user activeNetwork because our min sdk version is 23 if our min sdk version is less than 23
-        // then we have to user connectivityManager.activeNetworkInfo (Note: Deperated)
- 
         val network = connectivityManager.activeNetwork
         if(network==null){
             postValue(false)
         }
- 
-        /**
-         * After checking network its time to check network internet capabilities
-         * whether connection has internet or not for that we will register the network
-         * and then check network capabilities with the help of the callbacks
-         */
+
         val requestBuilder =NetworkRequest.Builder().apply {
             addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) // also for sdk version 23 or above

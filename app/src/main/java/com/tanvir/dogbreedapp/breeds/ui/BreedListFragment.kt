@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.tanvir.dogbreedapp.R
 import com.tanvir.dogbreedapp.databinding.BreedListFragmentBinding
 import com.tanvir.dogbreedapp.service.ConnectivityStatus
-import kotlinx.android.synthetic.main.breed_list_fragment.*
 
 
 class BreedListFragment : Fragment() {
@@ -52,10 +51,10 @@ class BreedListFragment : Fragment() {
                 for(breed in it){
                     if(breed.value.isEmpty())
                         breedList.add(Pair(breed.key,""))
-                    else
-                        for (sub_breed in breed.value){
-                            breedList.add(Pair(breed.key,sub_breed))
-                        }
+//                    else
+//                        for (sub_breed in breed.value){
+//                            breedList.add(Pair(breed.key,sub_breed))
+//                        }
                 }
                 adapter.setResponse(breedList)
 

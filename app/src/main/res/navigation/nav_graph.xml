@@ -9,13 +9,16 @@
         android:name="com.tanvir.dogbreedapp.breeds.ui.BreedListFragment"
         android:label="Dog Breeds"
         tools:layout="@layout/breed_list_fragment">
+
+
         <action
-            android:id="@+id/action_breedListFragment_to_breedImageFragment"
-            app:destination="@id/breedImageFragment" />
+            android:id="@+id/action_breedListFragment_to_breedImageListFragment"
+            app:destination="@id/specificBreedImageList" />
     </fragment>
+
     <fragment
-        android:id="@+id/breedImageFragment"
-        android:name="com.tanvir.dogbreedapp.breeds.ui.BreedImageFragment"
+        android:id="@+id/specificBreedImageList"
+        android:name="com.tanvir.dogbreedapp.breeds.ui.BreedAllImageFragment"
         android:label="Breed Photo">
         <argument
             android:name="parentBreed"

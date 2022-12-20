@@ -2,12 +2,24 @@ package com.tanvir.dogbreedapp.breeds.ui
 
 import androidx.lifecycle.*
 import com.tanvir.dogbreedapp.StructureViewModel
+import com.tanvir.dogbreedapp.breeds.repository.BreedListRepository
 import com.tanvir.dogbreedapp.db.FavBreeds
 import com.tanvir.dogbreedapp.breeds.repository.FavBreedsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FavItemViewModel(private val favBreedsRepository: FavBreedsRepository) : StructureViewModel() {
-
+    private val repository: BreedListRepository = BreedListRepository()
+    fun specificBreedImageList(breedName:String)  = liveData(Dispatchers.IO){
+        isLoading.postValue(true)
+        val responseBreedImage= repository.getBreedImageList(breedName)
+        if(responseBreedImage.isSuccessful) {
+            emit(responseBreedImage.body()!!.message)
+            breedEmpty.postValue(false)
+        }else{
+            breedEmpty.postValue(true)
+        }
+    }
     val allFavBreeds : LiveData<MutableList<FavBreeds>> = favBreedsRepository.alFavItemDaos.asLiveData()
     fun updateSize() {
         viewModelScope.launch {   if(allFavBreeds.value?.isEmpty()!!) {

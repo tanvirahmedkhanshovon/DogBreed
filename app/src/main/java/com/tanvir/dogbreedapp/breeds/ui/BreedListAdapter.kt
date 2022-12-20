@@ -56,7 +56,7 @@ class BreedListAdapter
             itemView.setOnClickListener {
             val bundle = bundleOf("parentBreed" to row.first, "childBreed" to row.second)
             itemView.findNavController()
-                .navigate(R.id.action_breedListFragment_to_breedImageFragment, bundle)
+                .navigate(R.id.action_breedListFragment_to_breedImageListFragment, bundle)
         }
         }
     }

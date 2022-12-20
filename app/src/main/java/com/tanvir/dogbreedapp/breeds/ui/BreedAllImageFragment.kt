@@ -2,24 +2,26 @@ package com.tanvir.dogbreedapp.breeds.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tanvir.dogbreedapp.MyApplication
 import com.tanvir.dogbreedapp.databinding.FavBreedListFragmentBinding
-
+import com.tanvir.dogbreedapp.db.FavBreeds
+import java.io.File
+import java.util.*
 
 
 @Suppress("DEPRECATION")
-class FavBreedFragment : Fragment(){
-    private  var adapter: FavBreedListAdapter = FavBreedListAdapter()
+class BreedAllImageFragment : Fragment(){
+    private   var adapter: SpecificBreedListAdapter = SpecificBreedListAdapter()
     private lateinit var dataBinding : FavBreedListFragmentBinding
+    private lateinit var breedList: MutableList<FavBreeds>
     private val favItemViewModel: FavItemViewModel by viewModels {
         FavItemViewModel.FavBreedsViewModelFactory((activity?.application as MyApplication).repository)
     }
@@ -28,7 +30,7 @@ class FavBreedFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View {
         dataBinding = FavBreedListFragmentBinding.inflate(inflater,  container, false).apply {
-
+//            viewmodel = favItemViewModel
             lifecycleOwner= viewLifecycleOwner
         }
 
@@ -37,7 +39,25 @@ class FavBreedFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupObservers()
+
+         dataBinding.viewmodel = favItemViewModel
+        val parentBreed = arguments?.let { BreedAllImageFragmentArgs.fromBundle(
+            it
+        ).parentBreed }
+        val childBreed = arguments?.let { BreedAllImageFragmentArgs.fromBundle(
+            it
+        ).childBreed }
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Your Title"
+        var imagePath=""+parentBreed
+        if(!childBreed.isNullOrEmpty()){
+            imagePath+=(File.separator+childBreed)
+        }
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = imagePath.trim().uppercase(
+            Locale.ROOT
+        )
+
+
+        setupObservers(parentBreed!!)
         setupAdapter()
 
 
@@ -45,36 +65,24 @@ class FavBreedFragment : Fragment(){
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun setupObservers() {
+    private fun setupObservers(imagePath : String) {
 
-        favItemViewModel.allFavBreeds.observe(requireActivity()) { favItemList ->
-            favItemViewModel.updateSize()
-            Log.i("Size" , "${favItemList?.size}")
-            adapter.setResponse(favItemList)
-            searching(dataBinding.searchView)
-            dataBinding.viewmodel = favItemViewModel
+        dataBinding.viewmodel?.specificBreedImageList(imagePath)?.observe(viewLifecycleOwner) {
 
+            if (it!=null)
+                breedList = mutableListOf()
+            for(breed in it){
+                  val bredDetails = FavBreeds(breed , imagePath)
+                    breedList.add(bredDetails)
+            }
 
+            adapter.setResponse(favItemViewModel, breedList)
+            dataBinding.viewmodel?.isLoading?.postValue(false)
+            dataBinding.searchView.visibility = View.GONE
 
         }
     }
-    private fun searching(search: SearchView) {
-        search.setOnClickListener {
 
-            search.onActionViewExpanded()
-        }
-        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                 adapter.filter.filter(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                adapter.filter.filter(newText)
-                return true
-            }
-        })
-    }
     private fun setupAdapter() {
         //val viewModel = dataBinding.viewmodel
 

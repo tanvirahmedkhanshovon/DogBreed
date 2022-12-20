@@ -5,32 +5,35 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.BounceInterpolator
+import android.view.animation.ScaleAnimation
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.tanvir.dogbreedapp.BR
 import com.tanvir.dogbreedapp.R
-import com.tanvir.dogbreedapp.databinding.BreedGridItemBinding
+import com.tanvir.dogbreedapp.databinding.SpecificBreedGridItemBinding
 import com.tanvir.dogbreedapp.db.FavBreeds
 import java.util.*
 
 
-class FavBreedListAdapter
+class SpecificBreedListAdapter
 
     () :
-    RecyclerView.Adapter<FavBreedListAdapter.GitRepoViewHolder>() , Filterable
+    RecyclerView.Adapter<SpecificBreedListAdapter.GitRepoViewHolder>() , Filterable
 {
 
     private var breedList: List<FavBreeds> = mutableListOf()
     private var breedListFiltered: List<FavBreeds> = mutableListOf()
+    private lateinit var viewmodel: FavItemViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitRepoViewHolder {
-        val viewBinding: BreedGridItemBinding = DataBindingUtil.inflate(
+        val viewBinding: SpecificBreedGridItemBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.breed_grid_item, parent, false
+            R.layout.specific_breed_grid_item, parent, false
 
         )
         return GitRepoViewHolder(viewBinding)
@@ -46,14 +49,16 @@ class FavBreedListAdapter
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setResponse(response: List<FavBreeds>) {
+    fun setResponse(viewmodel: FavItemViewModel, response: MutableList<FavBreeds>) {
+        this.viewmodel = viewmodel
         this.breedList = response
         this.breedListFiltered = this.breedList
         notifyDataSetChanged()
         // notifyDataSetChanged()
     }
 
-    inner class GitRepoViewHolder(private val viewBinding: BreedGridItemBinding) :
+
+    inner class GitRepoViewHolder(private val viewBinding: SpecificBreedGridItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
 
         fun onBind(position: Int) {
@@ -69,11 +74,23 @@ class FavBreedListAdapter
                 }
 
             })
-            viewBinding.setVariable(BR.breeds, row.name)
-            viewBinding.executePendingBindings()
+//            viewBinding.setVariable(BR.breeds, row.name)
+//            viewBinding.executePendingBindings()
 //            itemView.setOnClickListener {
 //
 //        }
+           viewBinding.buttonFavorite.setOnCheckedChangeListener { compoundButton, b ->
+
+                if(b){
+                    viewmodel.insert(FavBreeds(row.imagePath, row.name.replace("/" , "-")))
+
+                }
+                else {
+                    viewmodel.delete(FavBreeds(row.imagePath , row.name.replace("/" , "-")))
+                }
+                compoundButton?.startAnimation(createAnimation())
+
+            }
         }
 
     }
@@ -110,7 +127,25 @@ class FavBreedListAdapter
         }
     }
 
+    private fun createAnimation() : ScaleAnimation{
+        val scaleAnimation = ScaleAnimation(
+            0.7f,
+            1.0f,
+            0.7f,
+            1.0f,
+            Animation.RELATIVE_TO_SELF,
+            0.7f,
+            Animation.RELATIVE_TO_SELF,
+            0.7f
+        )
+        scaleAnimation.duration = 500
+        val bounceInterpolator = BounceInterpolator()
+        scaleAnimation.interpolator = bounceInterpolator
 
-
+     return scaleAnimation
+    }
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
 

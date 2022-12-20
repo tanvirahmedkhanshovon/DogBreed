@@ -13,8 +13,8 @@ interface DogsService {
     @GET("breeds/list/all")
     suspend fun getAllBreeds():Response<ResultsResponse<Map<String, List<String>>>>
 
-    @GET("breed/{breed}/images/random")
-    suspend fun getBreedImage(@Path("breed", encoded = true) breedName:String):Response<ResultsResponse<String>>
+    @GET("breed/{breed}/images")
+    suspend fun getBreedImages(@Path("breed", encoded = true) breedName:String):Response<ResultsResponse<List<String>>>
 
 
 

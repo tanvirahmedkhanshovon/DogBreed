@@ -2,13 +2,13 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
     id 'androidx.navigation.safeargs'
 
 
 }
 apply plugin: "kotlin-kapt"
-apply plugin: 'kotlin-android-extensions'
+
 android {
     namespace 'com.tanvir.dogbreedapp'
     compileSdk 33
